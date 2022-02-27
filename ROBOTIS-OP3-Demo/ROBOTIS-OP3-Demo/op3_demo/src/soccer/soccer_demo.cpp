@@ -60,6 +60,8 @@ SoccerDemo::SoccerDemo()
   set_walking_command_pub_ = nh.advertise<std_msgs::String>("/robotis/walking/command", 0);
   pre_gcm_game_state = 999;
 
+  standup_state_pub = nh.advertise<std_msgs::String>("robotis/walking/standup", 1000); //pjh
+
   is_grass_ = nh.param<bool>("grass_demo", false);
 
   //sensor_yaw_sub_ = nh.subscribe("/kubot/sensor_yaw", 1000, &SoccerDemo::sensor_yaw_callback, this);
@@ -684,6 +686,7 @@ void SoccerDemo::demoCommandCallback(const std_msgs::String::ConstPtr &msg)
   }
 }
 
+// standup_state_pub = nh.advertise<std_msgs::String>("robotis/walking/standup", 1000); //pjh
 // check fallen states
 void SoccerDemo::imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg)
 {
@@ -713,6 +716,10 @@ void SoccerDemo::imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg)
     stand_state_ = Fallen_Behind;
   else
     stand_state_ = Stand;
+
+  std_msgs::String msg; //pjh
+  msg.data = stand_state_;
+  standup_state_pub.publish(msg);
 }
 
 void SoccerDemo::startSoccerMode()
