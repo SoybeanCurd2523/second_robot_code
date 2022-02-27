@@ -1,0 +1,8 @@
+int16 main_game_state
+int16 Is_penalty
+int16 Secondary_remaining
+
+int16 vision_go_local
+int16 fake_start_point_x
+int16 fake_start_point_y
+int16 fake_start_point_orien
