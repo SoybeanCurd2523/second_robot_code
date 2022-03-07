@@ -33,7 +33,7 @@ void walkingCommandCallback(const std_msgs::String::ConstPtr& msg)
 {
 //  ROS_INFO("cc");
   if(msg->data == "start"){
-    walking_is_start = true;
+    walking_is_start = true;angle_move_amplitude 
 //    ROS_INFO("aa");
   }
   else if(msg->data == "stop"){
@@ -44,9 +44,8 @@ void walkingCommandCallback(const std_msgs::String::ConstPtr& msg)
 
 void walkingStateCallback(const std_msgs::String::ConstPtr& msg)
 {
-  if(msg->data == "Stand"){
+  if(msg->data == "Stand")
     standup_state = true;
-  }
   else
     standup_state = false;
 }
@@ -75,31 +74,76 @@ int main(int argc, char **argv)
     std_msgs::Float64 yaw_msg;
     std_msgs::Int32 step_num_msg;
 
-    if((walking_is_start == true) && (standup_state == true))
-    {
-      if(count >= 30){ // iterate every 600ms ( 1/50 * 30 * 1000)
-        step_num++;
-        position_x += x_move_amplitude;
-        position_y += y_move_amplitude;
-        orientation_yaw += angle_move_amplitude;
-        count = 0;
-      }
-    }
-    else
-    {
-      ROS_INFO("Robot is not Ready!");
-    }
+    // if((walking_is_start == true) && (standup_state == true))
+    // {
+    //   // if(count >= 30){ // iterate every 600ms ( 1/50 * 30 * 1000)
+    //   //   step_num++;
+    //   //   position_x += x_move_amplitude;
+    //   //   position_y += y_move_amplitude;
+    //   //   orientation_yaw += angle_move_amplitude;
+    //   //   count = 0;
+    //   // }
+    // }
+    // else
+    // {
+    //   ROS_INFO("Robot is not Ready!");
+    // }
 
        // msg.data = "hello world";
+
+    step_num++;
+
+    orientation_yaw = angle_move_amplitude;
+    double orientation_yaw_before = 0;
+
+    if(step_num >= 2)
+    {
+      orientation_yaw_before = orientation_yaw;
+
+      if(orientation_yaw >= 0) //CW
+      {
+        orientation_yaw -= orientation_yaw;
+      }
+      else  
+      {
+        orientation_yaw += orientation_yaw;
+      }
+    }
+
+    // for(int i=0 ; i < step_num ; i++)
+    // {                            
+    //   position_x = position_x + x_move_amplitude * cos(orientation_yaw);
+    //   position_y = position_y + y_move_amplitude * sin(orientation_yaw);   
+    // }
+
+    if( ((abs(orientation_yaw) + abs(orientation_yaw_before)) >= 90) && ((abs(orientation_yaw) + abs(orientation_yaw_before)) <= 180) )
+      position_x = position_x + x_move_amplitude * cos(orientation_yaw);
+    else
+      position_x = position_x + (-1) * x_move_amplitude * cos(orientation_yaw);
+
+
+    if( (abs(orientation_yaw) > abs(orientation_yaw_before)) && (abs(orientation_yaw) < abs(orientation_yaw_before) + M_PI) )
+      position_y = position_y + x_move_amplitude * sin(orientation_yaw);
+    else
+      position_y = position_y + (-1) * x_move_amplitude * sin(orientation_yaw);
+
+
+
+
+
     x_msg.data = position_x;
     y_msg.data = position_y;
     yaw_msg.data = orientation_yaw * RAD2DEG;
     step_num_msg.data = step_num;
 
-
     x_pub.publish(x_msg);
     y_pub.publish(y_msg);
     yaw_pub.publish(yaw_msg);
+
+    ROS_INFO("position_x : %lf", position_x);
+    ROS_INFO("position_y : %lf", position_y);
+    ROS_INFO("orientation_yaw : %lf", orientation_yaw);
+
     step_num_pub.publish(step_num_msg);
 
     ros::spinOnce();

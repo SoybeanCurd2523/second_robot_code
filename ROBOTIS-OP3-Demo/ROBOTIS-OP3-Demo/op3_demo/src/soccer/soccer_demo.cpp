@@ -686,7 +686,6 @@ void SoccerDemo::demoCommandCallback(const std_msgs::String::ConstPtr &msg)
   }
 }
 
-// standup_state_pub = nh.advertise<std_msgs::String>("robotis/walking/standup", 1000); //pjh
 // check fallen states
 void SoccerDemo::imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg)
 {
