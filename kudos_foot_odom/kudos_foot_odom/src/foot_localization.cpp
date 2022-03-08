@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 
     ros::Subscriber x_sub = nh.subscribe("kubot_Pose/position_x", 1000, XdataCallback);
     ros::Subscriber y_sub = nh.subscribe("kubot_Pose/position_y", 1000, YdatalCallback);
-    ros::Subscriber yaw_sub = nh.subscribe("kubot_Pose/orientation", 1000, YawdataCallback);
+    ros::Subscriber yaw_sub = nh.subscribe("kubot_Pose/orientation_yaw", 1000, YawdataCallback);
     ros::Subscriber step_num_sub = nh.subscribe("kubot_Pose/step_num", 1000, StepdataCallback);
     
     ros::spin();

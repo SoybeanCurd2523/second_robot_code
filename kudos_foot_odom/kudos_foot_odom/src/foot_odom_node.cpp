@@ -16,15 +16,19 @@ double position_y = 0.0;
 double orientation_yaw = 0.0;
 int step_num = 0;
 
-int count = 0;
+int i = 1;
+int j = 1;
+int rotate_count = 0;
 
 bool walking_is_start = false;
 
-bool standup_state = false; 
+// bool standup_state = false; 
 
 void walkingParamCallback(const op3_walking_module_msgs::WalkingParam::ConstPtr& msg)
 {
     x_move_amplitude = msg->x_move_amplitude;
+    if(x_move_amplitude < 0)
+      x_move_amplitude *= -1;
     y_move_amplitude = msg->y_move_amplitude;
     angle_move_amplitude = msg->angle_move_amplitude;
 }
@@ -42,13 +46,13 @@ void walkingCommandCallback(const std_msgs::String::ConstPtr& msg)
   }
 }
 
-void walkingStateCallback(const std_msgs::String::ConstPtr& msg)
-{
-  if(msg->data == "Stand")
-    standup_state = true;
-  else
-    standup_state = false;
-}
+// void walkingStateCallback(const std_msgs::String::ConstPtr& msg)
+// {
+//   if(msg->data == "Stand")
+//     standup_state = true;
+//   else
+//     standup_state = false;
+// }
 // standup_state_pub = nh.advertise<std_msgs::String>("robotis/walking/standup", 1000); //pjh
 
 int main(int argc, char **argv)
@@ -64,9 +68,9 @@ int main(int argc, char **argv)
   ros::Subscriber walking_command_sub = nh.subscribe("/robotis/walking/command", 0, walkingCommandCallback);
   ros::Subscriber sub = nh.subscribe("/robotis/walking/set_params", 1000, walkingParamCallback);
 
-  ros::Subscriber standup_state_sub = nh.subscribe("/robotis/walking/standup", 1000, walkingStateCallback); 
+  // ros::Subscriber standup_state_sub = nh.subscribe("/robotis/walking/standup", 1000, walkingStateCallback); 
 
-  ros::Rate loop_rate(50);
+  ros::Rate loop_rate(1);
   while (ros::ok())
   {
     std_msgs::Float64 x_msg;
@@ -74,62 +78,24 @@ int main(int argc, char **argv)
     std_msgs::Float64 yaw_msg;
     std_msgs::Int32 step_num_msg;
 
-    // if((walking_is_start == true) && (standup_state == true))
-    // {
-    //   // if(count >= 30){ // iterate every 600ms ( 1/50 * 30 * 1000)
-    //   //   step_num++;
-    //   //   position_x += x_move_amplitude;
-    //   //   position_y += y_move_amplitude;
-    //   //   orientation_yaw += angle_move_amplitude;
-    //   //   count = 0;
-    //   // }
-    // }
-    // else
-    // {
-    //   ROS_INFO("Robot is not Ready!");
-    // }
-
-       // msg.data = "hello world";
-
+   // double orientation_yaw = 0.0;
     step_num++;
 
-    orientation_yaw = angle_move_amplitude;
-    double orientation_yaw_before = 0;
+    orientation_yaw = orientation_yaw + angle_move_amplitude;
 
-    if(step_num >= 2)
+    if(orientation_yaw >= 2 * i * M_PI)
     {
-      orientation_yaw_before = orientation_yaw;
-
-      if(orientation_yaw >= 0) //CW
-      {
-        orientation_yaw -= orientation_yaw;
-      }
-      else  
-      {
-        orientation_yaw += orientation_yaw;
-      }
+      i++;
+      rotate_count++;
+      ROS_INFO(" rotate [%d] times", rotate_count);
     }
 
-    // for(int i=0 ; i < step_num ; i++)
-    // {                            
-    //   position_x = position_x + x_move_amplitude * cos(orientation_yaw);
-    //   position_y = position_y + y_move_amplitude * sin(orientation_yaw);   
-    // }
-
-    if( ((abs(orientation_yaw) + abs(orientation_yaw_before)) >= 90) && ((abs(orientation_yaw) + abs(orientation_yaw_before)) <= 180) )
-      position_x = position_x + x_move_amplitude * cos(orientation_yaw);
+    if((j<=3) && (x_move_amplitude != 0))
+      position_x = position_x + (0.002/3)
     else
-      position_x = position_x + (-1) * x_move_amplitude * cos(orientation_yaw);
-
-
-    if( (abs(orientation_yaw) > abs(orientation_yaw_before)) && (abs(orientation_yaw) < abs(orientation_yaw_before) + M_PI) )
-      position_y = position_y + x_move_amplitude * sin(orientation_yaw);
-    else
-      position_y = position_y + (-1) * x_move_amplitude * sin(orientation_yaw);
-
-
-
-
+      position_x = position_x + x_move_amplitude * cos(orientation_yaw) * 1.25; //보정계수
+ 
+    position_y = position_y + x_move_amplitude * sin(orientation_yaw);
 
     x_msg.data = position_x;
     y_msg.data = position_y;
@@ -140,7 +106,7 @@ int main(int argc, char **argv)
     y_pub.publish(y_msg);
     yaw_pub.publish(yaw_msg);
 
-    ROS_INFO("position_x : %lf", position_x);
+    ROS_INFO("position_x : [%lf] centi meter", position_x * 1000);
     ROS_INFO("position_y : %lf", position_y);
     ROS_INFO("orientation_yaw : %lf", orientation_yaw);
 
