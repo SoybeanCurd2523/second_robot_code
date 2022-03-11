@@ -15,4 +15,6 @@
 
     <!-- OP3 Localization -->
     <node pkg="op3_localization" type="op3_localization" name="op3_localization" output="screen"/>
+
+    <node pkg="$(find foot_odom)" type="foot_odom_node" name="foot_odom_node" output="screen"/> <!-- pjh-->
 </launch>
