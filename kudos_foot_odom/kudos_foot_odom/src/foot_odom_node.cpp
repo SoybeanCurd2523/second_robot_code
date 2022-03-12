@@ -40,7 +40,10 @@ void walkingCommandCallback(const std_msgs::String::ConstPtr& msg)
 }
 
 double errorfunction(double position_y, double orientation_yaw){
-  position_x = position_y / tan(orientation_yaw);
+  if( tan(orientation_yaw) != 0)
+    position_x = position_y / tan(orientation_yaw);
+  else  
+    ROS_INFO("tan(orientation = 0");
   return position_x;
 }
 
@@ -49,12 +52,11 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "foot_odom_node"); // node name 
   ros::NodeHandle nh;
 
-/*
   ros::Publisher x_pub = nh.advertise<std_msgs::Float64>("kubot_Pose/position_x", 1000); //topic name
   ros::Publisher y_pub = nh.advertise<std_msgs::Float64>("kubot_Pose/position_y", 1000);
   ros::Publisher yaw_pub = nh.advertise<std_msgs::Float64>("kubot_Pose/orientation_yaw", 1000);
   ros::Publisher step_num_pub = nh.advertise<std_msgs::Int32>("kubot_Pose/step_num", 1000);
-*/
+
   ros::Subscriber walking_command_sub = nh.subscribe("/robotis/walking/command", 0, walkingCommandCallback);
   ros::Subscriber sub = nh.subscribe("/robotis/walking/set_params", 1000, walkingParamCallback);
   
@@ -71,7 +73,7 @@ int main(int argc, char **argv)
     //define walkingstate
     if( (x_move_amplitude != 0) && (y_move_amplitude == 0) && (angle_move_amplitude == 0) )
       walkingstate = go_straight;
-    else if( (x_move_amplitude != 0) && (y_move_amplitude != 0) && (angle_move_amplitude !=0) )
+    else if( (x_move_amplitude != 0) && (y_move_amplitude != 0) && (angle_move_amplitude != 0) )
       walkingstate = rotate_with_ball;
     else if( (x_move_amplitude != 0) && (y_move_amplitude == 0) && (angle_move_amplitude != 0) )
       walkingstate = rotate_without_ball;
