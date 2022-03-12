@@ -70,13 +70,13 @@ int main(int argc, char **argv)
     
     //define walkingstate
     if( (x_move_amplitude != 0) && (y_move_amplitude == 0) && (angle_move_amplitude == 0) )
-      walkingstate = 0;
+      walkingstate = go_straight;
     else if( (x_move_amplitude != 0) && (y_move_amplitude != 0) && (angle_move_amplitude !=0) )
-      walkingstate = 1;
+      walkingstate = rotate_with_ball;
     else if( (x_move_amplitude != 0) && (y_move_amplitude == 0) && (angle_move_amplitude != 0) )
-      walkingstate = 2;
+      walkingstate = rotate_without_ball;
     else  
-      walkingstate = 3;
+      walkingstate = enable_odom;
 
     //calculation rotate count
     orientation_yaw = orientation_yaw + angle_move_amplitude
