@@ -1,6 +1,0 @@
-<launch>
-   <group ns= "kudos">
-    <node pkg="foot_odom" name="foot_odom_node" type="foot_odom_node" />
-    <node pkg="foot_odom" name="foot_localization_node" type="foot_localization_node" output="screen"/>
-  </group>   
-</launch>

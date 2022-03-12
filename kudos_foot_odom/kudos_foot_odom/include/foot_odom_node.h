@@ -9,6 +9,14 @@
 
 class foot_odom{
 public:
+  enum
+  {
+    go_straight= 0,
+    rotate_with_ball = 1,
+    rotate_without_ball = 2,
+    enable_odom = 3,
+  };
+
   foot_odom();
   ~foot_odom();
 
@@ -28,12 +36,15 @@ public:
 
   bool walking_is_start;
   // bool standup_state; 
-
+  double error;
   void walkingParamCallback(const op3_walking_module_msgs::WalkingParam::ConstPtr& msg);
   void walkingCommandCallback(const std_msgs::String::ConstPtr& msg);
+
+  double errorfunction(double position_y, double orientation_yaw)
   // void walkingStateCallback(const std_msgs::String::ConstPtr& msg);
 
 protected:
+  int walkingstate;
   ros::NodeHandle nh;
 
   ros::Rate loop_rate;
