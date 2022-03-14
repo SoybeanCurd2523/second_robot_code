@@ -104,7 +104,8 @@ void SoccerDemo::gameControllerMessageCallback(const op3_ball_detector::kudos_vi
   printf("Is_penalty:%d\n", Is_penalty);
   printf("Secondary_remaining:%d\n", Secondary_remaining);
 
-}
+} 자료형이 선언된 헤더파일의 경로 및 파일이름이 올바른지 확인한다.
+          2. namespace안에 구현된 경우일 수도 있으니 namespace를 사용했는지 확인한다.
 
 void SoccerDemo::mcl2_local_result_MessageCallback(const op3_ball_detector::kudos_vision_mcl2_local_result::ConstPtr &msg)
 {

@@ -1,4 +1,10 @@
-#include "foot_odom_node.h"
+// #include "foot_odom_node.h"
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include "std_msgs/Int32.h"
+#include "std_msgs/Float64.h"
+#include "op3_walking_module_msgs/WalkingParam.h"
+#include "math.h"
 
 double x_move_amplitude=0;
 double y_move_amplitude=0;
@@ -14,6 +20,11 @@ int j = 1;
 int rotate_count = 0;
 
 bool walking_is_start = false;
+
+const int go_straight = 0;
+const int rotate_with_ball = 1;
+const int rotate_without_ball = 2;
+const int enable_odom = 3;
 
 int walkingstate = enable_odom;
 
@@ -81,7 +92,7 @@ int main(int argc, char **argv)
       walkingstate = enable_odom;
 
     //calculation rotate count
-    orientation_yaw = orientation_yaw + angle_move_amplitude
+    orientation_yaw = orientation_yaw + angle_move_amplitude;
     if(orientation_yaw >= 2 * i * M_PI)
     {
       i++;
@@ -98,7 +109,7 @@ int main(int argc, char **argv)
         if(j<=3)
         {
           position_x = position_x + (0.002/3);
-          j++
+          j++;
         }
         else
           position_x = position_x + x_move_amplitude * cos(orientation_yaw) * 1.25; 
@@ -144,7 +155,6 @@ int main(int argc, char **argv)
     step_num_pub.publish(step_num_msg);
 
     ros::spinOnce();
-    count++;
 
     loop_rate.sleep();
 

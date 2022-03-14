@@ -49,12 +49,12 @@ protected:
 
   ros::Rate loop_rate;
 
-  ros::Publisher x_pub = nh.advertise<std_msgs::Float64>("kubot_Pose/position_x", 1000); //topic name
-  ros::Publisher y_pub = nh.advertise<std_msgs::Float64>("kubot_Pose/position_y", 1000);
-  ros::Publisher yaw_pub = nh.advertise<std_msgs::Float64>("kubot_Pose/orientation_yaw", 1000);
-  ros::Publisher step_num_pub = nh.advertise<std_msgs::Int32>("kubot_Pose/step_num", 1000);
+  ros::Publisher x_pub;
+  ros::Publisher y_pub;
+  ros::Publisher yaw_pub];
+  ros::Publisher step_num_pub;
 
-  ros::Subscriber walking_command_sub = nh.subscribe("/robotis/walking/command", 0, walkingCommandCallback);
-  ros::Subscriber sub = nh.subscribe("/robotis/walking/set_params", 1000, walkingParamCallback);
+  ros::Subscriber walking_command_sub;
+  ros::Subscriber sub;
   // ros::Subscriber standup_state_sub = nh.subscribe("/robotis/walking/standup", 1000, walkingStateCallback); 
 };
