@@ -1,18 +1,13 @@
-#include "foot_odom_node.h"
-//namespace robotis_op
-//{
-// #include "ros/ros.h"
-// #include "std_msgs/String.h"
-// #include "std_msgs/Int32.h"
-// #include "std_msgs/Float64.h"
-// #include "op3_walking_module_msgs/WalkingParam.h"
-// #include "math.h"
+// #include "foot_odom_node.h"
 
-// #define RAD2DEG 180/M_PI
+#include "ros/ros.h"
+#include "std_msgs/String.h"
+#include "std_msgs/Int32.h"
+#include "std_msgs/Float64.h"
+#include "op3_walking_module_msgs/WalkingParam.h"
+#include "math.h"
 
-// SoccerDemo::SoccerDemo()
-  // : FALL_FORWARD_LIMIT(70),
-
+#define RAD2DEG 180/M_PI
 
 double x_move_amplitude = 0.0;
 double y_move_amplitude = 0.0;
@@ -111,25 +106,27 @@ int main(int argc, char **argv)
       case go_straight:
         ROS_INFO("go straight");
 
-          if(j<=3)
+          if(j<=5)
         {
-          position_x = position_x + (0.002/3);
+          position_x = position_x + (0.004/5); // during first 5 step
+          position_y += position_y;
           j++;
+          error = abs(position_x - step_num * 0.004); // 1step -> 0.004m
         }
         else
+        {
           position_x = position_x + x_move_amplitude * cos(orientation_yaw) * 1.25; // correction value 
-        
-        position_y += position_y;
-        
-        error = abs(position_x - step_num * 0.004); // 1step -> 0.004m
-        ROS_INFO("current_x_error : %lf", error);
+          position_y = position_y + x_move_amplitude * sin(orientation_yaw) * 5;
+        }
+      
+        ROS_INFO("current_x_error : [%lf] mili meter : %lf", error *10000);
         
         break;
 
       case rotate_without_ball: 
         ROS_INFO("rotate without ball");
         position_x = position_x + x_move_amplitude * cos(orientation_yaw);
-        position_y += position_y;
+        position_y = position_y + x_move_amplitude * sin(orientation_yaw);
 
         error = abs(orientation_yaw - step_num * 0.348888); // 18step -> 1rotate
         ROS_INFO("current_yaw_error : %lf", error);
