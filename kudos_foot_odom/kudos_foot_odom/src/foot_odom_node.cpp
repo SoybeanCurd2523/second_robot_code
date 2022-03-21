@@ -86,7 +86,7 @@ int main(int argc, char **argv)
     if((x_move_amplitude != 0) && (y_move_amplitude == 0) && (angle_move_amplitude == 0))
       walkingstate = go_straight;
     else if
-      ((x_move_amplitude != 0) && (y_move_amplitude == 0) && (angle_move_amplitude != 0))
+      ((x_move_amplitude = 0) && (y_move_amplitude == 0) && (angle_move_amplitude != 0))
       walkingstate = rotate_without_ball;
     else  
       walkingstate = enable_odom;
